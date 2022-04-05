@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+ <html>
+   <head>
+      <title>Federide</title>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF" crossorigin="anonymous"></script>
+      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+   </head>
+
+   <script>
+   'use strict'
+   let request = null;
+
+   const handleResponse = (response) => {
+      $("#resultsDiv").html(response)
+   }
+
+   const updateQuery = () => {
+      let url = `/getprofile?key=${k}&location=${n}`;
+
+      if (request != null) {
+         request.abort();
+      }
+
+      request = $.ajax(
+         {
+            type: "GET",
+            url: url,
+            success: handleResponse,
+         }
+      )
+   }
+
+   $(document).ready(() => {
+      updateQuery()
+   })
+   </script>
+   </body>
+ </html>
