@@ -5,12 +5,11 @@
 # Author: Mutemwa Masheke
 #-----------------------------------------------------------------------
 
-from sys import stderr
-from urllib import response
-from flask import Flask, request, make_response
-from flask import render_template
-import json
-from flask import jsonify
+from profiles_get import get_profiles
+from profiles_edit import edit_profile
+import requests
+import socket
+from flask import Flask, request, jsonify
 
 #-----------------------------------------------------------------------
 
@@ -19,54 +18,40 @@ app = Flask(__name__, template_folder='.')
 #-----------------------------------------------------------------------
 
 # route for landing page which lists enables profile search
-@app.route('/', methods=['GET'])
-@app.route('/index', methods=['GET'])
-def index():
-    html = render_template('index.html')
-    response = make_response(html)
-    return response
-
-def argument(argtext):
-    return "${" + str(argtext) + "}"
-
-def isValidUser(database, key, location):
-    return (database["key"] == argument(key) and database["location"] == argument(location))
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/updatelocation', methods=['GET', 'POST'])
+def updatelocation():
+    user_key = request.args.get('key')
+    ## getting the hostname by socket.gethostname() method
+    hostname = socket.gethostname()
+    ## getting the IP address using socket.gethostbyname() method
+    ip_addr = socket.gethostbyname(hostname)
+    response = requests.get(f"http://ip-api.com/json/{ip_addr}?fields=city")
+    location = response.json()
+    # edit_profile(user_key=user_key, args={"location": location})
+    return jsonify(ip_addr)
 
 # route for searchresults - helper to index
 @app.route('/getprofile', methods=['GET'])
-def searchresults():
-    keys = ['key', 'location']
-    details = dict.fromkeys(keys)
+def getprofile():
+    keys = ["name", "email", "federate", "location", "key", "age", "role"]
+    details = {}
+    for k in keys:
+        if request.args.get(k):
+            arg = request.args.get(k) if request.args.get(k) else ""
+            details[k] = arg
+    response = get_profiles(details)
+    return jsonify(response)
 
-    details['key'] = request.args.get('key')
-    details['location'] = request.args.get('location')
-
-    if details['key'] is None:
-        details['key'] = ''
-    if details['location'] is None:
-        details['location'] = ''
-
-    response = {"location": details['location'], "key": details['key']}
-
-    if isValidUser(details, "Mutemwa", "Lusaka"):
-        response.update({"FullName": "Mutemwa Masheke"})
-        response.update({"Age": 21})
-        response.update({"email": "mmasheke@princeton.edu"})
-        response.update({"UserExists": True})
-
-    elif isValidUser(details, "Aneekah", "Montclair"):
-        response.update({"FullName": "Aneekah Uddin"})
-        response.update({"Age": 21})
-        response.update({"email": "auddin@princeton.edu"})
-        response.update({"UserExists": True})
-
-    elif isValidUser(details, "Zaid", "Dhahran"):
-        response.update({"FullName": "Zaid Albarghouty"})
-        response.update({"Age": 20})
-        response.update({"email": "zaidma@princeton.edu"})
-        response.update({"UserExists": True})
-
-    else:
-        response.update({"UserExists": False})
-
+@app.route('/editprofile', methods=['GET', 'POST'])
+def editprofile():
+    if not request.args.get("key"):
+        raise Exception("No key provided")
+    keys = ["name", "email", "federate", "location", "key", "age", "role"]
+    details = {}
+    for k in keys:
+        if request.args.get(k):
+            arg = request.args.get(k) if request.args.get(k) else ""
+            details[k] = arg
+    response = edit_profile(details["key"], details)
     return jsonify(response)
