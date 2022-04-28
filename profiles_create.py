@@ -1,6 +1,9 @@
 #-----------------------------------------------------------------------
-# profiles_query.py
-# Author: Mutemwa Masheke 
+# profiles_create.py
+# Author: Mutemwa Masheke
+# 
+# Creates a profile using name, federate, email, location, age, role 
+# information
 #-----------------------------------------------------------------------
 
 from profiles_get import get_profiles
@@ -14,14 +17,20 @@ DATABASE_URL = 'file:federide.sqlite'
 DB_FILENAME = 'federide.sqlite'
 
 #-----------------------------------------------------------------------
+
+# 
 def create_profile(args):
+
+    # if database does not exist within directory raise an exception
     if not os.path.isfile(DB_FILENAME):
         raise Exception('unable to open database file')
 
+    # patrons cannot join as a federate 
     if (args["role"] == "patron" and args["federate"]):
         raise Exception('patron cannot be a member of a federate')
 
-    if get_profiles({"key": args["key"]}):
+    # avoid duplicate keys and emails
+    if get_profiles({"key": args["key"]}) or get_profiles({"email": args["email"]}):
         raise Exception('User already exists')
 
     with connect(DATABASE_URL, uri=True) as connection:
@@ -33,8 +42,8 @@ def create_profile(args):
 
 # creates entire database query
 def _profile_builder(query_info):
+    
     # Building the query string using predefined statements
-
     keys = ", ".join(query_info.keys())
     question_marks = ", ".join(["?" for i in query_info.keys()])
     sql_args = [i for i in query_info.values()]

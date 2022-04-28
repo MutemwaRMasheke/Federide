@@ -2,7 +2,7 @@
 
 #-----------------------------------------------------------------------
 # runserver.py
-# Author: Mutemwa Masheke, Ian Jaccojwang
+# Author: Mutemwa Masheke
 #-----------------------------------------------------------------------
 
 from sys import exit, stderr

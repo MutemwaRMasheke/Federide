@@ -1,6 +1,9 @@
 #-----------------------------------------------------------------------
-# profiles_query.py
-# Author: Mutemwa Masheke 
+# profiles_get.py
+# Author: Mutemwa Masheke
+# 
+# Retrieves a profile using name, federate, email, location, age, role 
+# information
 #-----------------------------------------------------------------------
 
 from operator import contains

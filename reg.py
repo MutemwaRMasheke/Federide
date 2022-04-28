@@ -5,6 +5,7 @@
 # Author: Mutemwa Masheke
 #-----------------------------------------------------------------------
 
+from profiles_create import create_profile
 from profiles_get import get_profiles
 from profiles_edit import edit_profile
 import requests
@@ -47,6 +48,7 @@ def getprofile():
 def editprofile():
     if not request.args.get("key"):
         raise Exception("No key provided")
+
     keys = ["name", "email", "federate", "location", "key", "age", "role"]
     details = {}
     for k in keys:
@@ -54,4 +56,20 @@ def editprofile():
             arg = request.args.get(k) if request.args.get(k) else ""
             details[k] = arg
     response = edit_profile(details["key"], details)
+    return jsonify(response)
+
+@app.route('/createprofile', methods=['GET', 'POST'])
+def createprofile():
+    if not request.args.get("key"):
+        raise Exception("No key provided")
+        
+    keys = ["name", "email", "federate", "location", "key", "age", "role"]
+    details = {}
+    for k in keys:
+        if request.args.get(k):
+            arg = request.args.get(k) if request.args.get(k) else ""
+            details[k] = arg
+
+    print(details)
+    response = create_profile(details)
     return jsonify(response)

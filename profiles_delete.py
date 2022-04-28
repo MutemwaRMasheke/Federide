@@ -1,6 +1,9 @@
 #-----------------------------------------------------------------------
-# profiles_query.py
-# Author: Mutemwa Masheke 
+# profiles_delete.py
+# Author: Mutemwa Masheke
+# 
+# Deletes a profile using name, federate, email, location, age, role 
+# information
 #-----------------------------------------------------------------------
 
 from operator import contains

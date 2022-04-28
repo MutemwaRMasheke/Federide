@@ -1,6 +1,10 @@
 #-----------------------------------------------------------------------
-# profiles_query.py
-# Author: Mutemwa Masheke 
+# federate_delete.py
+# Author: Mutemwa Masheke
+# 
+# Deletes an entire federate from the profile database and remove all 
+# workers from the storage. Returns a csv file with the deleted 
+# information 
 #-----------------------------------------------------------------------
 
 from profiles_get import get_profiles
@@ -15,22 +19,33 @@ DATABASE_URL = 'file:federide.sqlite'
 DB_FILENAME = 'federide.sqlite'
 
 #-----------------------------------------------------------------------
+
+# Takes a user account key and deletes all workers from a federation only if the user 
+# account has permission to do so. Returns a csv file of all federation members
 def delete_federate(user_key, federate_name):
+
+    # if database does not exist within directory raise an exception
     if not os.path.isfile(DB_FILENAME):
         raise Exception('unable to open database file')
 
+
     with connect(DATABASE_URL, uri=True) as connection:
         with closing(connection.cursor()) as cursor:
-            client_profile = get_profiles({"key": user_key})
 
+            client_profile = get_profiles({"key": user_key})
+             
+            # ensure user key exists
             if not client_profile:
                 raise Exception("You do not have permission to delete a federation")
 
+            
             validate_profile = client_profile[0]
 
+            # user has to have adequate permissions to make delete permission
             if not (validate_profile["federate"] == federate_name) and ("account" in validate_profile["role"]):
                 raise Exception("You do not have permission to delete a federation")
 
+            # create csv of deleted data
             federate_csv = get_profiles({"federate": federate_name})
 
             sql_statement = "DELETE FROM profiles WHERE federate LIKE ?"
@@ -39,6 +54,8 @@ def delete_federate(user_key, federate_name):
             return federate_csv
 
 #-----------------------------------------------------------------------
+
+# takes in an array of profiles and returns a csv file
 def createCSV(dictionary_list, csv_name):
     columns = list({key for dictionary in dictionary_list for key in dictionary.keys()})
     

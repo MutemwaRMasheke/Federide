@@ -1,6 +1,9 @@
 #-----------------------------------------------------------------------
-# profiles_query.py
-# Author: Mutemwa Masheke 
+# profiles_edit.py
+# Author: Mutemwa Masheke
+# 
+# Alters a profile given a key using name, federate, email, location, age, role 
+# information
 #-----------------------------------------------------------------------
 
 from profiles_create import create_profile
