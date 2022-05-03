@@ -73,3 +73,19 @@ def createprofile():
     print(details)
     response = create_profile(details)
     return jsonify(response)
+
+@app.route('/createdatabase', methods=['GET', 'POST'])
+def createprofile():
+    if not request.args.get("key"):
+        raise Exception("No key provided")
+        
+    keys = ["name", "email", "federate", "location", "key", "age", "role"]
+    details = {}
+    for k in keys:
+        if request.args.get(k):
+            arg = request.args.get(k) if request.args.get(k) else ""
+            details[k] = arg
+
+    print(details)
+    response = create_profile(details)
+    return jsonify(response)

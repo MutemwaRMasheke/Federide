@@ -18,9 +18,7 @@ DB_FILENAME = 'federide.sqlite'
 
 #-----------------------------------------------------------------------
 
-# Deletes an entire federate from the profile database and remove all 
-# workers from the storage. Returns a csv file with the deleted 
-# information
+# retrieves an entire list of all federate coops 
 def retrieve_all_federate(args={}):
 
     # if database does not exist within directory raise an exception

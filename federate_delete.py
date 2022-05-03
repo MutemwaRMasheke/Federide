@@ -38,7 +38,6 @@ def delete_federate(user_key, federate_name):
             if not client_profile:
                 raise Exception("You do not have permission to delete a federation")
 
-            
             validate_profile = client_profile[0]
 
             # user has to have adequate permissions to make delete permission
